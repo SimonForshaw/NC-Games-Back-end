@@ -4,10 +4,11 @@
   "description": "bc-nc-games",
   "main": "index.js",
   "scripts": {
-    "setup-dbs": "psql -f ./db/setup.sql",
+    "setup-dbs": "psql -f ./db/setup.sql > db.txt",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "playground": "psql -f playground.sql > playground.txt"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,10 @@
   "homepage": "https://github.com/northcoders/be-nc-games#readme",
   "dependencies": {
     "dotenv": "^16.0.0",
-    "pg": "^8.7.3"
+    "express": "^4.18.2",
+    "jest-sorted": "^1.0.14",
+    "pg": "^8.10.0",
+    "supertest": "^6.3.3"
   },
   "devDependencies": {
     "husky": "^8.0.2",
