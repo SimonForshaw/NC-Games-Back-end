@@ -32,3 +32,18 @@ describe("returns all categories from the GET category request", () => {
       });
   });
 });
+
+describe("returns all endpoints avaliable under '/api'", () => {
+  test("returns a JSON object of objects, each containing a property of 'description', 'queries' and 'exampleResponse'", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((res) => {
+        Object.keys(res.body.endpoints).forEach((endpointsObj) => {
+          expect(endpointsObj).hasOwnProperty("description");
+          expect(endpointsObj).hasOwnProperty("queries");
+          expect(endpointsObj).hasOwnProperty("exampleResponse");
+        });
+      });
+  });
+});
