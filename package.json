@@ -6,7 +6,7 @@
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql > db.txt",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest --forceExit",
+    "test": "jest",
     "prepare": "husky install",
     "playground": "psql -f playground.sql > playground.txt"
   },
