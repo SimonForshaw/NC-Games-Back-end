@@ -52,31 +52,39 @@ describe("returns an review that corresponds to the review_id that is passed in"
     return request(app)
       .get("/api/reviews/1")
       .then(({ body }) => {
-        expect(body.title).toEqual("Agricola");
-        expect(body.designer).toEqual("Uwe Rosenberg");
-        expect(body.owner).toEqual("mallionaire");
-        expect(body.review_img_url).toEqual(
+        expect(body.review.title).toEqual("Agricola");
+        expect(body.review.designer).toEqual("Uwe Rosenberg");
+        expect(body.review.owner).toEqual("mallionaire");
+        expect(body.review.review_img_url).toEqual(
           "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700"
         );
-        expect(body.review_body).toEqual("Farmyard fun!");
-        expect(body.category).toEqual("euro game");
-        expect(body.created_at).toEqual("2021-01-18T10:00:20.514Z");
-        expect(body.votes).toEqual(1);
+        expect(body.review.review_body).toEqual("Farmyard fun!");
+        expect(body.review.category).toEqual("euro game");
+        expect(body.review.created_at).toEqual("2021-01-18T10:00:20.514Z");
+        expect(body.review.votes).toEqual(1);
       });
   });
   test("returns the correct review depending on the endpoint that the user inputs", () => {
     return request(app)
       .get("/api/reviews/5")
       .then(({ body }) => {
-        expect(body.review_id).toEqual(5);
+        expect(body.review.review_id).toEqual(5);
       });
   });
   test("gives a 404 error when a valid but non-existant path is passed in", () => {
     return request(app)
-      .get("/api/reviews/14")
+      .get("/api/reviews/1400")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Path not found");
+      });
+  });
+  test("gives a 400 error when a valid but non-existant path is passed in", () => {
+    return request(app)
+      .get("/api/reviews/nonsense")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });

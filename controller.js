@@ -17,10 +17,8 @@ exports.getReviewsById = (req, res, next) => {
   const inputId = req.params.review_id;
   fetchReviewsById(inputId)
     .then((review) => {
-      if (review.length === 0) {
-        res.status(404).send({ msg: "Path not found" });
-      }
-      res.status(200).send(review[0]);
+      console.log(review, "< Controller review console log");
+      res.status(200).send({ review });
     })
     .catch(next);
 };

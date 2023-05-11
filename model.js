@@ -11,9 +11,13 @@ exports.fetchCategories = () => {
 };
 
 exports.fetchReviewsById = (inputId) => {
-  const queryString = `SELECT * FROM reviews WHERE review_id = ${inputId};`;
-  return db.query(queryString).then((reviewsById) => {
-    return reviewsById.rows;
+  const queryString = `SELECT * FROM reviews WHERE review_id = $1;`;
+  return db.query(queryString, [inputId]).then((reviewsById) => {
+    if (reviewsById.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Path not found" });
+    } else {
+      return reviewsById.rows[0];
+    }
   });
 };
 
