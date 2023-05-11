@@ -1,13 +1,15 @@
 const express = require("express");
 const app = express();
 
-const {  getCategories, getEndpoints } = require("./controller");
+const { getCategories, getEndpoints, getReviewsById } = require("./controller");
 
 app.use(express.json());
 
 app.get("/api/categories", getCategories);
+
 app.get("/api", getEndpoints);
 
+app.get("/api/reviews/:review_id", getReviewsById);
 
 app.use((req, res, next) => {
   // console.log(res.status)

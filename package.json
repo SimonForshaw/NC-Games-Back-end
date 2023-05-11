@@ -6,9 +6,11 @@
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql > db.txt",
     "seed": "node ./db/seeds/run-seed.js",
+    "seed-test": "NODE_ENV=test node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "playground": "psql -f playground.sql > playground.txt"
+    "playground": "psql -f playground.sql > playground.txt",
+    "playground-test": "psql -f playground-test.sql > playground-test.txt"
   },
   "repository": {
     "type": "git",
