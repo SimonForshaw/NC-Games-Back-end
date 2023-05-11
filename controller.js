@@ -1,4 +1,5 @@
 const { fetchCategories } = require("./model");
+const fetchEndpoints = require("./endpoints.json");
 
 exports.getCategories = (req, res, next) => {
   fetchCategories()
@@ -7,4 +8,9 @@ exports.getCategories = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getEndpoints = (req, res, next) => {
+  res.status(200).send({ endpoints: fetchEndpoints });
+};
+
 console.log("In Controller!");
