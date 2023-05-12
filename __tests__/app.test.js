@@ -89,24 +89,46 @@ describe("returns an review that corresponds to the review_id that is passed in"
   });
 });
 
-// describe("returns all reviews from the GET reviews request", () => {
-//   test("returns an array of review objects, each containing a property of review_id, title, review_body, designer, review_img_url, votes, category, owner and created_at", () => {
-//     return request(app)
-//       .get("/api/reviews/1")
-//       .expect(200)
-//       .then(({ body }) => {
-//         body.reviews.forEach((reviewsObj) => {
-//           expect(reviewsObj).hasOwnProperty("review_id");
-//           expect(reviewsObj).hasOwnProperty("title");
-//           expect(reviewsObj).hasOwnProperty("review_body");
-//           expect(reviewsObj).hasOwnProperty("designer");
-//           expect(reviewsObj).hasOwnProperty("review_img_url");
-//           expect(reviewsObj).hasOwnProperty("votes");
-//           expect(reviewsObj).hasOwnProperty("category");
-//           expect(reviewsObj).hasOwnProperty("owner");
-//           expect(reviewsObj).hasOwnProperty("created_at");
-//         });
-//         expect(Array.isArray(body.reviews));
-//       });
-//   });
-// });
+describe("returns all reviews from the GET reviews request", () => {
+  test("returns an array of review objects, each containing a property of review_id, title, designer, review_img_url, votes, category, owner and created_at and does not contain a property of review_body ", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((response) => {
+        response.body.reviews.forEach((reviewsObj) => {
+          expect(reviewsObj).hasOwnProperty("review_id");
+          expect(reviewsObj).hasOwnProperty("title");
+          expect(reviewsObj).not.hasOwnProperty("review_body");
+          expect(reviewsObj).hasOwnProperty("designer");
+          expect(reviewsObj).hasOwnProperty("review_img_url");
+          expect(reviewsObj).hasOwnProperty("votes");
+          expect(reviewsObj).hasOwnProperty("category");
+          expect(reviewsObj).hasOwnProperty("owner");
+          expect(reviewsObj).hasOwnProperty("created_at");
+          expect(reviewsObj).hasOwnProperty("comment_count");
+        });
+        expect(Array.isArray(response.body.reviews));
+        expect(response.body.reviews.length).toBe(13);
+      });
+  });
+});
+
+test("each review has the correct review_id", () => {
+  return request(app)
+    .get("/api/reviews/3")
+    .then(({ body }) => {
+      expect(body.review.review_id).toEqual(3);
+    });
+});
+test("returns with the oldest reviews first", () => {
+  return request(app)
+    .get("/api/reviews")
+    .then(({ body }) => {
+      expect([
+        body.reviews[0].created_at,
+        body.reviews[1].created_at,
+        body.reviews[2].created_at,
+        body.reviews[3].created_at,
+      ]).toBeSorted({ descending: true });
+    });
+});

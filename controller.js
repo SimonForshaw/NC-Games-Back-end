@@ -1,4 +1,4 @@
-const { fetchCategories, fetchReviewsById } = require("./model");
+const { fetchCategories, fetchReviewsById, fetchReviews } = require("./model");
 const fetchEndpoints = require("./endpoints.json");
 
 exports.getCategories = (req, res, next) => {
@@ -17,8 +17,15 @@ exports.getReviewsById = (req, res, next) => {
   const inputId = req.params.review_id;
   fetchReviewsById(inputId)
     .then((review) => {
-      console.log(review, "< Controller review console log");
       res.status(200).send({ review });
+    })
+    .catch(next);
+};
+
+exports.getReviews = (req, res, next) => {
+  fetchReviews()
+    .then((reviewsAarray) => {
+      res.status(200).send({ reviews: reviewsAarray });
     })
     .catch(next);
 };
