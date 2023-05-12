@@ -1,2 +1,7 @@
 node_modules
 .env.*
+db.txt
+playground-test.sql
+playground-test.txt
+playground.sql
+playground.txt
