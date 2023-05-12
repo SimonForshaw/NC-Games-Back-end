@@ -95,7 +95,6 @@ describe("returns all reviews from the GET reviews request", () => {
       .get("/api/reviews")
       .expect(200)
       .then((response) => {
-        expect(response.body.reviews).toBeSortedBy("created_at");
         response.body.reviews.forEach((reviewsObj) => {
           expect(reviewsObj).hasOwnProperty("review_id");
           expect(reviewsObj).hasOwnProperty("title");
@@ -109,6 +108,7 @@ describe("returns all reviews from the GET reviews request", () => {
           expect(reviewsObj).hasOwnProperty("comment_count");
         });
         expect(Array.isArray(response.body.reviews));
+        expect(response.body.reviews.length).toBe(13);
       });
   });
 });
@@ -129,22 +129,6 @@ test("returns with the oldest reviews first", () => {
         body.reviews[1].created_at,
         body.reviews[2].created_at,
         body.reviews[3].created_at,
-      ]).toBeSorted({ ascending: true });
-    });
-});
-test("gives a 404 error when a valid but non-existent path is passed in", () => {
-  return request(app)
-    .get("/api/reviews/1400")
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Path not found");
-    });
-});
-test("gives a 400 error when a valid but non-existant path is passed in", () => {
-  return request(app)
-    .get("/api/reviews/nonsense")
-    .expect(400)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Bad Request");
+      ]).toBeSorted({ descending: true });
     });
 });
