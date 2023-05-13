@@ -36,4 +36,16 @@ exports.fetchReviews = () => {
     });
 };
 
+exports.fetchCommentsByReviewsId = (inputId) => {
+  const queryString = `SELECT * FROM comments WHERE review_id = $1
+  ORDER BY comments.created_at DESC;`;
+  return db.query(queryString, [inputId]).then((commentsById) => {
+    if (commentsById.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Path not found" });
+    } else {
+      return commentsById.rows;
+    }
+  });
+};
+
 console.log("In model!");

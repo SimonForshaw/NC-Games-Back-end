@@ -132,3 +132,56 @@ test("returns with the oldest reviews first", () => {
       ]).toBeSorted({ descending: true });
     });
 });
+
+describe("returns all comments that corresponds to the review_id that is passed in", () => {
+  test("returns an array of comment objects, each containing a property of comment_id, votes, created_at, author, body and review_id ", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.comment.forEach((commentsObj) => {
+          expect(commentsObj).hasOwnProperty("comment_id");
+          expect(commentsObj).hasOwnProperty("votes");
+          expect(commentsObj).hasOwnProperty("created_at");
+          expect(commentsObj).hasOwnProperty("author");
+          expect(commentsObj).hasOwnProperty("body");
+          expect(commentsObj).hasOwnProperty("review_id");
+        });
+        expect(Array.isArray(body.comment));
+      });
+  });
+});
+
+test("each review has the correct review_id", () => {
+  return request(app)
+    .get("/api/reviews/3/comments")
+    .then(({ body }) => {
+      expect(body.comment[0].review_id).toEqual(3);
+    });
+});
+test("returns with the oldest reviews first", () => {
+  return request(app)
+    .get("/api/reviews/3/comments")
+    .then(({ body }) => {
+      expect([
+        body.comment[0].created_at,
+        body.comment[1].created_at,
+      ]).toBeSorted({ descending: true });
+    });
+});
+test("gives a 404 error when a valid but non-existant path is passed in", () => {
+  return request(app)
+    .get("/api/reviews/1400/comments")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Path not found");
+    });
+});
+test("gives a 400 error when a valid but non-existant path is passed in", () => {
+  return request(app)
+    .get("/api/reviews/nonsense/comments")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Bad Request");
+    });
+});
