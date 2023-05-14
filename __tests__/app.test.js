@@ -79,7 +79,7 @@ describe("returns an review that corresponds to the review_id that is passed in"
         expect(body.msg).toBe("Path not found");
       });
   });
-  test("gives a 400 error when a path with angit  invalid text representation is passed in", () => {
+  test("gives a 400 error when a path with an invalid text representation is passed in", () => {
     return request(app)
       .get("/api/reviews/nonsense")
       .expect(400)
