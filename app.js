@@ -6,6 +6,7 @@ const {
   getEndpoints,
   getReviewsById,
   getReviews,
+  getCommentsByReviewsId,
 } = require("./controller");
 
 app.get("/api/categories", getCategories);
@@ -15,6 +16,8 @@ app.get("/api", getEndpoints);
 app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewsById);
+
+app.get("/api/reviews/:review_id/comments", getCommentsByReviewsId);
 
 app.use((req, res, next) => {
   // console.log("Err Handler", res.status, "Operational");
