@@ -3,6 +3,7 @@ const {
   fetchReviewsById,
   fetchReviews,
   fetchCommentsByReviewsId,
+  addCommentsByReviewsId,
 } = require("./model");
 const fetchEndpoints = require("./endpoints.json");
 
@@ -44,4 +45,15 @@ exports.getCommentsByReviewsId = (req, res, next) => {
     .catch(next);
 };
 
+exports.postCommentsByReviewId = (req, res, next) => {
+  const reviewId = req.params.review_id;
+  console.log(req.body, "Thisone!!");
+  const username = req.body.author;
+  const commentBody = req.body.body;
+  addCommentsByReviewsId(reviewId, username, commentBody)
+    .then((commentData) => {
+      res.status(201).send({ commentData });
+    })
+    .catch(next);
+};
 console.log("In Controller!");

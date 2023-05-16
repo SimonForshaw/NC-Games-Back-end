@@ -111,26 +111,26 @@ describe("returns all reviews from the GET reviews request", () => {
         expect(response.body.reviews.length).toBe(13);
       });
   });
-});
 
-test("each review has the correct review_id", () => {
-  return request(app)
-    .get("/api/reviews/3")
-    .then(({ body }) => {
-      expect(body.review.review_id).toEqual(3);
-    });
-});
-test("returns with the oldest reviews first", () => {
-  return request(app)
-    .get("/api/reviews")
-    .then(({ body }) => {
-      expect([
-        body.reviews[0].created_at,
-        body.reviews[1].created_at,
-        body.reviews[2].created_at,
-        body.reviews[3].created_at,
-      ]).toBeSorted({ descending: true });
-    });
+  test("each review has the correct review_id", () => {
+    return request(app)
+      .get("/api/reviews/3")
+      .then(({ body }) => {
+        expect(body.review.review_id).toEqual(3);
+      });
+  });
+  test("returns with the oldest reviews first", () => {
+    return request(app)
+      .get("/api/reviews")
+      .then(({ body }) => {
+        expect([
+          body.reviews[0].created_at,
+          body.reviews[1].created_at,
+          body.reviews[2].created_at,
+          body.reviews[3].created_at,
+        ]).toBeSorted({ descending: true });
+      });
+  });
 });
 
 describe("returns all comments that corresponds to the review_id that is passed in", () => {
@@ -150,38 +150,101 @@ describe("returns all comments that corresponds to the review_id that is passed 
         expect(Array.isArray(body.comment));
       });
   });
+
+  test("each review has the correct review_id", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .then(({ body }) => {
+        expect(body.comment[0].review_id).toEqual(3);
+      });
+  });
+  test("returns with the oldest reviews first", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .then(({ body }) => {
+        expect([
+          body.comment[0].created_at,
+          body.comment[1].created_at,
+        ]).toBeSorted({ descending: true });
+      });
+  });
+  test("gives a 404 error when a valid but non-existant path is passed in", () => {
+    return request(app)
+      .get("/api/reviews/1400/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found");
+      });
+  });
+  test("gives a 400 error when a path with an invalid text representation is passed in", () => {
+    return request(app)
+      .get("/api/reviews/nonsense/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
 
-test("each review has the correct review_id", () => {
-  return request(app)
-    .get("/api/reviews/3/comments")
-    .then(({ body }) => {
-      expect(body.comment[0].review_id).toEqual(3);
-    });
-});
-test("returns with the oldest reviews first", () => {
-  return request(app)
-    .get("/api/reviews/3/comments")
-    .then(({ body }) => {
-      expect([
-        body.comment[0].created_at,
-        body.comment[1].created_at,
-      ]).toBeSorted({ descending: true });
-    });
-});
-test("gives a 404 error when a valid but non-existant path is passed in", () => {
-  return request(app)
-    .get("/api/reviews/1400/comments")
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Path not found");
-    });
-});
-test("gives a 400 error when a path with an invalid text representation is passed in", () => {
-  return request(app)
-    .get("/api/reviews/nonsense/comments")
-    .expect(400)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Bad Request");
-    });
+describe("posts comments relating to an review (depending on the review_id that is passed in", () => {
+  test("should respond with a 201 status", () => {
+    const comment = {
+      author: "bainesface",
+      body: "I find this game plays better on PC",
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(comment)
+      .expect(201);
+  });
+  test("adds a comment with the correct username and body and returns an object with the correct information", () => {
+    const comment = {
+      author: "bainesface",
+      body: "I first played this game 10 years ago, glas to see it is still going strong",
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(comment)
+      .then((response) => {
+        const addedComment = response.body.commentData;
+        expect(addedComment.comment_id).toEqual(7);
+        expect(addedComment.author).toEqual("bainesface");
+        expect(addedComment.body).toEqual(
+          "I first played this game 10 years ago, glas to see it is still going strong"
+        );
+      });
+  });
+  test("if an attempt is made to post comments to an review id that does not exist, respond with an error", () => {
+    const comment = { author: "bainesface", body: "Bad game" };
+
+    return request(app)
+      .post("/api/reviews/1400/comments")
+      .send(comment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Path not found");
+      });
+  });
+  test("returns an error when an object with invalid keys is passed in", () => {
+    const comment = { developer: "bainesface", comment: "Bad game" };
+
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(comment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad Request");
+      });
+  });
+  test("returns an error when an object with invalid values is passed in", () => {
+    const comment = { author: "unknownUser", comment: ["invalid comment"] };
+
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(comment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad Request");
+      });
+  });
 });
