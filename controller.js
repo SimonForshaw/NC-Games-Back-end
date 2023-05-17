@@ -47,7 +47,6 @@ exports.getCommentsByReviewsId = (req, res, next) => {
 
 exports.postCommentsByReviewId = (req, res, next) => {
   const reviewId = req.params.review_id;
-  console.log(req.body, "Thisone!!");
   const username = req.body.author;
   const commentBody = req.body.body;
   addCommentsByReviewsId(reviewId, username, commentBody)
