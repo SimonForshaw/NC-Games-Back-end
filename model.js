@@ -68,4 +68,21 @@ exports.addCommentsByReviewsId = (inputId, username, body) => {
   }
 };
 
-console.log("In model!");
+exports.updateReviewVotes = (id, votes) => {
+  return db
+    .query(
+      `UPDATE reviews
+    SET votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *;`,
+      [id, votes]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Review Not Found." });
+      } else {
+        if (result.rows[0].votes < 0) result.rows[0].votes = 0;
+        return result.rows;
+      }
+    });
+};
