@@ -59,6 +59,8 @@ exports.addCommentsByReviewsId = (inputId, username, body) => {
       .catch((error) => {
         if (error.code === "23503") {
           return Promise.reject({ status: 404, msg: "Path not found" });
+        } else {
+          throw new Error(error);
         }
       });
   } else {
