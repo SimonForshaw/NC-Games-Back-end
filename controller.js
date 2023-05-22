@@ -4,6 +4,7 @@ const {
   fetchReviews,
   fetchCommentsByReviewsId,
   addCommentsByReviewsId,
+  updateReviewVotes,
 } = require("./model");
 const fetchEndpoints = require("./endpoints.json");
 
@@ -55,4 +56,14 @@ exports.postCommentsByReviewId = (req, res, next) => {
     })
     .catch(next);
 };
-console.log("In Controller!");
+
+exports.patchReviewVotes = (req, res, next) => {
+  const { review_id } = req.params;
+  const reviewVote = req.body;
+
+  return updateReviewVotes(review_id, reviewVote.inc_votes)
+    .then((updatedReview) => {
+      res.status(201).send({ review: updatedReview });
+    })
+    .catch((err) => next(err));
+};

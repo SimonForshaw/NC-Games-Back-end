@@ -9,6 +9,7 @@ const {
   getReviews,
   getCommentsByReviewsId,
   postCommentsByReviewId,
+  patchReviewVotes,
 } = require("./controller");
 
 app.get("/api/categories", getCategories);
@@ -23,29 +24,26 @@ app.get("/api/reviews/:review_id/comments", getCommentsByReviewsId);
 
 app.post("/api/reviews/:review_id/comments", postCommentsByReviewId);
 
+app.patch("/api/reviews/:review_id", patchReviewVotes);
+
 app.use((req, res, next) => {
-  // console.log("Err Handler", res.status, "Operational");
   res.status(404).send({ msg: "Path not found" });
 });
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
-    // console.log(err.status, "Err Handler 1");
     res.status(err.status).send({ msg: err.msg });
   } else next(err);
 });
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
-    // console.log(err.status, "Err Handler 2");
     res.status(400).send({ msg: "Bad Request" });
   } else next(err);
 });
 
 app.use((err, req, res, next) => {
-  // console.log(err, "Err Handler 3");
   res.status(500).send({ msg: "Server Error" });
 });
 
-console.log("In app!");
 module.exports = app;

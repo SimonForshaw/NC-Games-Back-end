@@ -132,7 +132,6 @@ describe("returns all reviews from the GET reviews request", () => {
       });
   });
 });
-
 describe("returns all comments that corresponds to the review_id that is passed in", () => {
   test("returns an array of comment objects, each containing a property of comment_id, votes, created_at, author, body and review_id ", () => {
     return request(app)
@@ -245,6 +244,65 @@ describe("posts comments relating to an review (depending on the review_id that 
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual("Bad Request");
+      });
+  });
+});
+
+describe("patches a comment with an updated vote count and returns an object containing the new vote count", () => {
+  test("should respond with a 201 status", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app).patch("/api/reviews/2").expect(201).send(newVotes);
+  });
+  test("should update the comment with a new vote count and return the new vote count", () => {
+    const newVotes = { inc_votes: 3 };
+    return request(app)
+      .patch("/api/reviews/3")
+      .expect(201)
+      .send(newVotes)
+      .then(({ body }) => {
+        expect(body.review[0]).toEqual({
+          category: "social deduction",
+          created_at: "2021-01-18T10:01:41.251Z",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_body: "We couldn't find the werewolf!",
+          review_id: 3,
+          votes: 7,
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          title: "Ultimate Werewolf",
+          votes: 8,
+        });
+      });
+  });
+  test("vote count patch works with a negative number", () => {
+    const newVotes = { inc_votes: -3 };
+    return request(app)
+      .patch("/api/reviews/3")
+      .expect(201)
+      .send(newVotes)
+      .then(({ body }) => {
+        expect(body.review[0]).toEqual({
+          review_id: 3,
+          title: "Ultimate Werewolf",
+          designer: "Akihisa Okui",
+          owner: "bainesface",
+          review_img_url:
+            "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+          review_body: "We couldn't find the werewolf!",
+          category: "social deduction",
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 2,
+        });
+      });
+  });
+
+  test("if an attempt is made to update votes to an review id that does not exist, respond with an error", () => {
+    return request(app)
+      .get("/api/reviews/1400")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found");
       });
   });
 });
