@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 const {
   getCategories,
@@ -7,6 +8,7 @@ const {
   getReviewsById,
   getReviews,
   getCommentsByReviewsId,
+  postCommentsByReviewId,
 } = require("./controller");
 
 app.get("/api/categories", getCategories);
@@ -18,6 +20,8 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewsId);
+
+app.post("/api/reviews/:review_id/comments", postCommentsByReviewId);
 
 app.use((req, res, next) => {
   // console.log("Err Handler", res.status, "Operational");

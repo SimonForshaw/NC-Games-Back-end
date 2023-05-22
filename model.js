@@ -48,4 +48,24 @@ exports.fetchCommentsByReviewsId = (inputId) => {
   });
 };
 
+exports.addCommentsByReviewsId = (inputId, username, body) => {
+  if (inputId && username && body) {
+    const queryString = `INSERT INTO comments (review_id, author, body) VALUES ($1, $2, $3) RETURNING *;`;
+    return db
+      .query(queryString, [inputId, username, body])
+      .then((commentData) => {
+        return commentData.rows[0];
+      })
+      .catch((error) => {
+        if (error.code === "23503") {
+          return Promise.reject({ status: 404, msg: "Path not found" });
+        } else {
+          throw new Error(error);
+        }
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
 console.log("In model!");
