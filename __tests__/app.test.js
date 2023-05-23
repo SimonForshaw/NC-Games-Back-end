@@ -306,3 +306,30 @@ describe("patches a comment with an updated vote count and returns an object con
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id test suite", () => {
+  test("returns 204 no content status", () => {
+    return request(app)
+      .delete("/api/comments/6")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("returns 404 when passed comment id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/1400")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found");
+      });
+  });
+  test("DELETE - status 400 - invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/nonsense")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
