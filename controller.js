@@ -5,6 +5,7 @@ const {
   fetchCommentsByReviewsId,
   addCommentsByReviewsId,
   updateReviewVotes,
+  removeCommentById,
 } = require("./model");
 const fetchEndpoints = require("./endpoints.json");
 
@@ -60,10 +61,19 @@ exports.postCommentsByReviewId = (req, res, next) => {
 exports.patchReviewVotes = (req, res, next) => {
   const { review_id } = req.params;
   const reviewVote = req.body;
-
   return updateReviewVotes(review_id, reviewVote.inc_votes)
     .then((updatedReview) => {
       res.status(201).send({ review: updatedReview });
     })
-    .catch((err) => next(err));
+    .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  console.log(comment_id);
+  return removeCommentById(comment_id)
+    .then((deleteComment) => {
+      res.status(204).send(deleteComment);
+    })
+    .catch(next);
 };
